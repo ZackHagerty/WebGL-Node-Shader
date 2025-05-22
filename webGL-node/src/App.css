@@ -1,0 +1,37 @@
+.app{
+  height: 100vh;
+  width: 100vw;
+
+  display: flex;
+  flex-direction: row;
+}
+
+.shader-view{
+  width: 75vw;
+  background-color: pink;
+
+  border: 2px solid rgba(0, 0, 0, .7);
+}
+
+.column{
+  display: flex;
+  flex-direction: column;
+}
+
+.object-view{
+  width: 25vw;
+  height: 50vh;
+  
+
+  border: 2px solid rgba(0, 0, 0, .7);
+}
+
+.material-view{
+  width: 25vw;
+  height: 50vh;
+
+  border: 2px solid rgba(0, 0, 0, .7);
+
+}
+
+
