@@ -1,57 +1,69 @@
-import React, { useRef, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import { Menu, MenuItem } from "@mui/material";
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
+import React, { useState } from 'react';
+import { Menu, MenuItem } from '@mui/material';
 
 
 export default function ObjectView() {
-const containerRef = useRef(null);
+  const [geometryType, setGeometryType] = useState('capsule');
   const [menuPosition, setMenuPosition] = useState(null);
 
-  const handleContextMenu = (event) => {
-    event.preventDefault();
-    setMenuPosition(
-      menuPosition === null
-        ? {
-            mouseX: event.clientX + 2,
-            mouseY: event.clientY - 6,
-          }
-        : null
-    );
+  const handleMenuOpen = (event) => {
+    setMenuPosition({
+      mouseX: event.clientX,
+      mouseY: event.clientY,
+    });
   };
 
   const handleClose = () => {
     setMenuPosition(null);
   };
 
-  return (
-    <div
-      ref={containerRef}
-      onContextMenu={handleContextMenu}
-    
-    >
-      <Canvas style={{ width: "25vw", height: "50vh" }}>
-        <ambientLight />
-        <mesh>
-          <boxGeometry />
-          <meshStandardMaterial color="orange" />
-        </mesh>
-        <OrbitControls />
-      </Canvas>
+  const handleSelect = (type) => {
+    setGeometryType(type);
+    handleClose();
+  };
 
-      <Menu
-        open={menuPosition !== null}
-        onClose={handleClose}
-        anchorReference="anchorPosition"
-        anchorPosition={
-          menuPosition !== null
-            ? { top: menuPosition.mouseY, left: menuPosition.mouseX }
-            : undefined
-        }
-      >
-        <MenuItem onClick={handleClose}>Option 1</MenuItem>
-        <MenuItem onClick={handleClose}>Option 2</MenuItem>
-      </Menu>
-    </div>
+  const renderGeometry = () => {
+    switch (geometryType) {
+      case 'box': return <boxGeometry />;
+      case 'sphere': return <sphereGeometry />;
+      case 'torus': return <torusGeometry args={[1, 0.4, 16, 100]} />;
+      case 'plane': return <planeGeometry args={[2, 2]} />;
+      case 'torusKnot': return <torusKnotGeometry args={[1, 0.3, 100, 16]} />;
+      default: return <capsuleGeometry />;
+    }
+  };
+
+  return (
+    <>
+      <div onContextMenu={handleMenuOpen} style={{ width: '100vw', height: '100vh' }}>
+        <Canvas style={{ width: "25vw", height: "50vh" }}>
+          <ambientLight />
+          <mesh>
+            {renderGeometry()}
+            <meshStandardMaterial color="orange" />
+          </mesh>
+          <OrbitControls />
+        </Canvas>
+
+        <Menu
+          open={menuPosition !== null}
+          onClose={handleClose}
+          anchorReference="anchorPosition"
+          anchorPosition={
+            menuPosition !== null
+              ? { top: menuPosition.mouseY, left: menuPosition.mouseX }
+              : undefined
+          }
+        >
+          <MenuItem onClick={() => handleSelect('sphere')}>Sphere</MenuItem>
+          <MenuItem onClick={() => handleSelect('box')}>Box</MenuItem>
+          <MenuItem onClick={() => handleSelect('torus')}>Torus</MenuItem>
+          <MenuItem onClick={() => handleSelect('plane')}>Plane</MenuItem>
+          <MenuItem onClick={() => handleSelect('torusKnot')}>Torus Knot</MenuItem>
+        </Menu>
+      </div>
+    </>
   );
 }
